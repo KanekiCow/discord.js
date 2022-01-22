@@ -1,32 +1,29 @@
-const axios = require('axios');
-const { MessageEmbed } = require('discord.js');
-
+const { get } = require("https");
 module.exports = {
-	name: 'cat',
-	 aliases: [" "],
-  description: "cat thingy",
-  usage: "cat",
-	run: async (client, message, args) => {
-		const url = 'https://cataas.com/cat?json=true';
-
-			let image;
-		try {
-			const { data } = await axios.get(url);
-			console.log(data);
-			image = "https://cataas.com/"+ data.url;
-		} catch (e) {
-			return message.channel.send('An error occured, please try again!');
-		}
-
+  name: "ok",
+  aliases: [],
+  description: "ok",
+  usage: "ok",
+  run: async (client, message, args) => { 
     
-
-		const embed = new MessageEmbed()
-			.setTitle('Random Cat girl Image')
-			.setColor('#f3f3f3')
-			.setImage(image);
-
-
-
-		return message.channel.send(embed);
-	},
-};
+get("https://neko-love.xyz/api/v1/neko", (res) => {
+    const { statusCode } = res;
+    if (statusCode != 200) {
+        res.resume;
+    }
+    res.setEncoding("utf8");
+    let rawData = '';
+    res.on("data", (chunk) => {
+        rawData += chunk;
+    });
+    res.on("end", () => {
+        try {
+            const parsedData = JSON.parse(rawData);
+            console.log(parsedData);
+        } catch (e) {
+            console.error(e.message);
+        }
+    });
+}).on("error", (err) => {
+    console.error(err.message);
+});
